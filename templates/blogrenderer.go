@@ -33,28 +33,13 @@ func NewPostRenderer() (*PostRenderer, error) {
 }
 
 func (r *PostRenderer) Render(w io.Writer, p Post) error {
-	if err := r.templ.Execute(w, p); err != nil {
-		return err
-	}
-
-	return nil
+	return r.templ.ExecuteTemplate(w, "blog.gohtml", p)
 }
 
 func (r *PostRenderer) RenderIndex(w io.Writer, posts []Post) error {
-	indexTemplate := `<ol>{{range .}}<li><a href="/post/{{sanitiseTitle .Title}}">{{.Title}}</a></li>{{end}}</ol>`
+	return r.templ.ExecuteTemplate(w, "index.gohtml", posts)
+}
 
-	templ, err := template.New("index").Funcs(template.FuncMap{
-		"sanitiseTitle": func(title string) string {
-			return strings.ToLower(strings.Replace(title, " ", "-", -1))
-		},
-	}).Parse(indexTemplate)
-	if err != nil {
-		return err
-	}
-
-	if err := templ.Execute(w, posts); err != nil {
-		return err
-	}
-
-	return nil
+func (p Post) SanitisedTitle() string {
+	return strings.ToLower(strings.Replace(p.Title, " ", "-", -1))
 }
