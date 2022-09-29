@@ -1,13 +1,5 @@
 package main
 
-func Reduce[A any](collection []A, accumulator func(A, A) A, initialValue A) A {
-	var result = initialValue
-	for _, x := range collection {
-		result = accumulator(result, x)
-	}
-	return result
-}
-
 func Sum(numbers []int) int {
 
 	add := func(acc, x int) int { return acc + x }
